@@ -16,7 +16,10 @@ public interface IvehiculoRepository extends JpaRepository<Vehiculo, Long> {
             nativeQuery = true)*/
 
     // Usando consulta JPQL
-    @Query("SELECT v FROM Vehiculo v WHERE v.manufacturingDate > ?1 AND v.manufacturingDate <= ?2")
+    //@Query("SELECT v FROM Vehiculo v WHERE v.manufacturingDate > ?1 AND v.manufacturingDate <= ?2")
+
+    //Usando HQL
+    @Query("FROM Vehiculo v WHERE v.manufacturingDate > ?1 AND v.manufacturingDate <= ?2")
     public List<Vehiculo> findVehiculosByDateBetween(LocalDate date1, LocalDate date2);
 
     public List<Vehiculo> findVehiculosByPriceBetween(int price1, int price2);

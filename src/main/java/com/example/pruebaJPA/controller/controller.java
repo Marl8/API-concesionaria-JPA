@@ -1,13 +1,11 @@
 package com.example.pruebaJPA.controller;
 
-
 import com.example.pruebaJPA.dto.VehiculoDto;
 import com.example.pruebaJPA.service.IvehiculoService;
 import com.example.pruebaJPA.service.VehiculoServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 
 @RestController

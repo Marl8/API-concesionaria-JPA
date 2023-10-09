@@ -7,7 +7,6 @@ import com.example.pruebaJPA.dto.VehiculoResponseDto;
 import com.example.pruebaJPA.entity.Vehiculo;
 import com.example.pruebaJPA.repository.IvehiculoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +75,7 @@ public class VehiculoServiceImpl implements IvehiculoService{
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        Long idVehiculo = Long.valueOf(id);
+        Long idVehiculo = (long) id;
         /*
         Usar el Método findById en lugar del referentById para evitar el error
         en el mapeo que se da cuando se usa este último

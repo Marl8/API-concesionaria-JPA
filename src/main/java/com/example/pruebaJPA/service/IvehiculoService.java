@@ -1,10 +1,8 @@
 package com.example.pruebaJPA.service;
 
-
 import com.example.pruebaJPA.dto.VehiculoDto;
 import com.example.pruebaJPA.dto.VehiculoGetDto;
 import com.example.pruebaJPA.dto.VehiculoResponseDto;
-
 import java.time.LocalDate;
 import java.util.List;
 
