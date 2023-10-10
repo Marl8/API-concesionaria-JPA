@@ -1,10 +1,13 @@
 package com.example.pruebaJPA.service;
 
-
 import com.example.pruebaJPA.dto.VehiculoDto;
 import com.example.pruebaJPA.dto.VehiculoGetDto;
 import com.example.pruebaJPA.dto.VehiculoResponseDto;
 import com.example.pruebaJPA.entity.Vehiculo;
+import com.example.pruebaJPA.exception.VehiculoClonException;
+import com.example.pruebaJPA.exception.VehiculoNoSaveException;
+import com.example.pruebaJPA.exception.VehiculoNotFoundException;
+import com.example.pruebaJPA.exception.VehiculoNotFoundIdException;
 import com.example.pruebaJPA.repository.IvehiculoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -27,11 +30,16 @@ public class VehiculoServiceImpl implements IvehiculoService{
     public VehiculoResponseDto guardarVehiculo(VehiculoDto auto) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+
+        // Verificar si existe el vehiculo si no existe lanza la excepción
+        if(verificarSiExiste(auto)){
+            throw new VehiculoClonException("El vehiculo ya existe");
+        }
         Vehiculo vehiculo = mapper.convertValue(auto,Vehiculo.class);
         Vehiculo respuestaRepo = repository.save(vehiculo);
 
         if(respuestaRepo == null){
-            return new VehiculoResponseDto("Error!!! No se logró guardar el vehiculo.");
+            throw new VehiculoNoSaveException("Error!!! No se logró guardar el vehiculo.");
         }
         return new VehiculoResponseDto("El vehiculo modelo "+ respuestaRepo.getModel() + " se guardó correctamente.");
     }
@@ -39,6 +47,11 @@ public class VehiculoServiceImpl implements IvehiculoService{
     @Override
     public List<VehiculoGetDto> findAllSinServices() {
         List<Vehiculo> result = repository.findAll();
+
+        // Se detiene el flujo del método si la lista está vacía y arroja una excepción
+        if(result.isEmpty()){
+            throw new VehiculoNotFoundException("No se encontraron vehiculos");
+        }
         return convertirDto(result);
     }
 
@@ -71,7 +84,7 @@ public class VehiculoServiceImpl implements IvehiculoService{
     * */
 
     @Override
-    public VehiculoDto findVehiculoById(int id) {
+    public VehiculoDto findVehiculoById(int id)  {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
@@ -80,7 +93,13 @@ public class VehiculoServiceImpl implements IvehiculoService{
         Usar el Método findById en lugar del referentById para evitar el error
         en el mapeo que se da cuando se usa este último
          */
+
+        // Verificar si existe el id si no existe lanza la excepción
+        if(!verificarSiExisteId(id)){
+            throw new VehiculoNotFoundIdException("id inexistente");
+        }
         Vehiculo auto = repository.findById(idVehiculo).get();
+
         return mapper.convertValue(auto,VehiculoDto.class);
     }
 
@@ -106,6 +125,11 @@ public class VehiculoServiceImpl implements IvehiculoService{
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         List<Vehiculo> result = repository.findVehiculosByPriceBetween(price1, price2);
+
+        if(result.isEmpty()){
+            throw new VehiculoNotFoundException("No se encontraron vehiculos en el rango seleccionado");
+        }
+
         return result.stream().map(v -> mapper.convertValue(v, VehiculoDto.class)).toList();
     }
 
@@ -156,4 +180,39 @@ public class VehiculoServiceImpl implements IvehiculoService{
         return fecha;
     }
     */
+
+    // Verifica si el vehículo recibido ya existe en la BD
+    private boolean verificarSiExiste(VehiculoDto vehiculo){
+
+        List<Vehiculo> lista = repository.findAll();
+
+        if(lista.isEmpty()){
+            return false;
+        }
+        List<Vehiculo> listaBusqueda = lista.stream()
+                .filter(v -> v.getId().equals(v.getId())).toList();
+        if(listaBusqueda.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
+    // Verifica si el ID recibido ya existe en la BD
+    private boolean verificarSiExisteId(int id){
+
+        List<Vehiculo> lista = repository.findAll();
+
+        // si la lista que llega del repository esta vacía
+        if(lista.isEmpty()){
+            return false;
+        }
+        Vehiculo auto = lista.stream()
+                .filter(v -> v.getId() == id).findFirst().orElse(null);
+
+        // si el vehículo filtrado por id es null es porque el id no existe en la BD
+        if(auto == null){
+            return false;
+        }
+        return true;
+    }
 }
