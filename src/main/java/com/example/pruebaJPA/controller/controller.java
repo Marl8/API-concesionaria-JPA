@@ -3,6 +3,8 @@ package com.example.pruebaJPA.controller;
 import com.example.pruebaJPA.dto.VehiculoDto;
 import com.example.pruebaJPA.service.IvehiculoService;
 import com.example.pruebaJPA.service.VehiculoServiceImpl;
+import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class controller {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> guardarVehiculo(@RequestBody VehiculoDto vehiculoDto){
+    public ResponseEntity<?> guardarVehiculo(@Valid @RequestBody VehiculoDto vehiculoDto){
         return new ResponseEntity<>(service.guardarVehiculo(vehiculoDto), HttpStatus.OK);
     }
 
@@ -29,17 +31,19 @@ public class controller {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findAllVehiculoById(@PathVariable int id){
+    public ResponseEntity<?> findVehiculoById(@Valid @PathVariable int id){
         return new ResponseEntity<>(service.findVehiculoById(id), HttpStatus.OK);
     }
 
     @GetMapping("/dates")
-    public ResponseEntity<?> findVehiculoByDate(@RequestParam LocalDate since, @RequestParam LocalDate to){
+    public ResponseEntity<?> findVehiculoByDate(
+            @Valid @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate since,
+            @Valid @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to){
         return new ResponseEntity<>(service.findVehiculosByDate(since, to), HttpStatus.OK);
     }
 
     @GetMapping("/prices")
-    public ResponseEntity<?> findVehiculoByPrices(@RequestParam int since, @RequestParam int to){
+    public ResponseEntity<?> findVehiculoByPrices(@Valid @RequestParam int since, @Valid @RequestParam int to){
         return new ResponseEntity<>(service.findVehiculosByPrice(since, to), HttpStatus.OK);
     }
 }

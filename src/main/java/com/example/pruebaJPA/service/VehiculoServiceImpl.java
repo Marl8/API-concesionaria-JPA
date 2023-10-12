@@ -12,7 +12,6 @@ import com.example.pruebaJPA.repository.IvehiculoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,6 +35,21 @@ public class VehiculoServiceImpl implements IvehiculoService{
             throw new VehiculoClonException("El vehiculo ya existe");
         }
         Vehiculo vehiculo = mapper.convertValue(auto,Vehiculo.class);
+
+        /*
+        * Los objetos hijos no tienen forma de conocer su objeto principal en el contexto
+        * de Hibernate por ello es que la FK se registra como NULL en la relación Bidireccional.
+        * Para evitarlo debemos indicarle expresamente a Hibernate quien es su objeto padre,
+        * como se realiza a continuación.
+        *
+        * Fuente:
+        * https://stackoverflow.com/questions/52135048/foreign-key-is-always-null-in-one-to-many-relation-spring-boot-data-with-jpa
+        *
+        * https://stackoverflow.com/questions/58044640/jpa-inserting-foreign-key-as-null
+         * */
+        vehiculo.getServices().stream().forEach(service -> {
+                service.setVehiculo(vehiculo);
+        });
         Vehiculo respuestaRepo = repository.save(vehiculo);
 
         if(respuestaRepo == null){
@@ -50,7 +64,7 @@ public class VehiculoServiceImpl implements IvehiculoService{
 
         // Se detiene el flujo del método si la lista está vacía y arroja una excepción
         if(result.isEmpty()){
-            throw new VehiculoNotFoundException("No se encontraron vehiculos");
+            throw new VehiculoNotFoundException("No se encontraron vehículos");
         }
         return convertirDto(result);
     }
@@ -92,11 +106,14 @@ public class VehiculoServiceImpl implements IvehiculoService{
         /*
         Usar el Método findById en lugar del referentById para evitar el error
         en el mapeo que se da cuando se usa este último
+
+        Fuente:
+        https://stackoverflow.com/questions/52656517/no-serializer-found-for-class-org-hibernate-proxy-pojo-bytebuddy-bytebuddyinterc
          */
 
         // Verificar si existe el id si no existe lanza la excepción
         if(!verificarSiExisteId(id)){
-            throw new VehiculoNotFoundIdException("id inexistente");
+            throw new VehiculoNotFoundIdException("No existen vehículos con este Id");
         }
         Vehiculo auto = repository.findById(idVehiculo).get();
 
@@ -106,6 +123,10 @@ public class VehiculoServiceImpl implements IvehiculoService{
    @Override
     public List<VehiculoGetDto> findVehiculosByDate(LocalDate date1, LocalDate date2) {
         List<Vehiculo> result = repository.findVehiculosByDateBetween(date1, date2);
+
+       if(result.isEmpty()){
+           throw new VehiculoNotFoundException("No se encontraron vehículos en el rango seleccionado");
+       }
         return convertirDto(result);
     }
 
@@ -127,7 +148,7 @@ public class VehiculoServiceImpl implements IvehiculoService{
         List<Vehiculo> result = repository.findVehiculosByPriceBetween(price1, price2);
 
         if(result.isEmpty()){
-            throw new VehiculoNotFoundException("No se encontraron vehiculos en el rango seleccionado");
+            throw new VehiculoNotFoundException("No se encontraron vehículos en el rango seleccionado");
         }
 
         return result.stream().map(v -> mapper.convertValue(v, VehiculoDto.class)).toList();
@@ -190,7 +211,10 @@ public class VehiculoServiceImpl implements IvehiculoService{
             return false;
         }
         List<Vehiculo> listaBusqueda = lista.stream()
-                .filter(v -> v.getId().equals(v.getId())).toList();
+                .filter(v -> v.getBrand().equals(vehiculo.getBrand())
+                && v.getModel().equals(vehiculo.getModel())
+                && v.getManufacturingDate().isEqual(vehiculo.getManufacturingDate()))
+                .toList();
         if(listaBusqueda.isEmpty()){
             return false;
         }
