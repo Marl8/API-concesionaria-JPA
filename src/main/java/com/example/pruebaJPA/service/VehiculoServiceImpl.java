@@ -38,7 +38,8 @@ public class VehiculoServiceImpl implements IvehiculoService{
 
         /*
         * Los objetos hijos no tienen forma de conocer su objeto principal en el contexto
-        * de Hibernate por ello es que la FK se registra como NULL en la relación Bidireccional.
+        * de Hibernate por ello es que la FK se registra como NULL en la relación Bidireccional,
+        * ya que, no se sabe a qué objeto debe apuntar o referenciar.
         * Para evitarlo debemos indicarle expresamente a Hibernate quien es su objeto padre,
         * como se realiza a continuación.
         *
@@ -47,9 +48,12 @@ public class VehiculoServiceImpl implements IvehiculoService{
         *
         * https://stackoverflow.com/questions/58044640/jpa-inserting-foreign-key-as-null
          * */
+
+        // Le seteamos al Service su objeto padre(vehiculo).
         vehiculo.getServices().stream().forEach(service -> {
                 service.setVehiculo(vehiculo);
         });
+        // Guardamos el vehículo con el objeto padre(vehiculo) ya referenciado.
         Vehiculo respuestaRepo = repository.save(vehiculo);
 
         if(respuestaRepo == null){
