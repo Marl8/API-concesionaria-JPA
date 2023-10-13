@@ -50,7 +50,7 @@ public class VehiculoServiceImpl implements IvehiculoService{
          * */
 
         // Le seteamos al Service su objeto padre(vehiculo).
-        vehiculo.getServices().stream().forEach(service -> {
+        vehiculo.getServices().forEach(service -> {
                 service.setVehiculo(vehiculo);
         });
         // Guardamos el vehículo con el objeto padre(vehiculo) ya referenciado.
@@ -120,7 +120,6 @@ public class VehiculoServiceImpl implements IvehiculoService{
             throw new VehiculoNotFoundIdException("No existen vehículos con este Id");
         }
         Vehiculo auto = repository.findById(idVehiculo).get();
-
         return mapper.convertValue(auto,VehiculoDto.class);
     }
 
@@ -154,7 +153,6 @@ public class VehiculoServiceImpl implements IvehiculoService{
         if(result.isEmpty()){
             throw new VehiculoNotFoundException("No se encontraron vehículos en el rango seleccionado");
         }
-
         return result.stream().map(v -> mapper.convertValue(v, VehiculoDto.class)).toList();
     }
 
@@ -210,7 +208,6 @@ public class VehiculoServiceImpl implements IvehiculoService{
     private boolean verificarSiExiste(VehiculoDto vehiculo){
 
         List<Vehiculo> lista = repository.findAll();
-
         if(lista.isEmpty()){
             return false;
         }

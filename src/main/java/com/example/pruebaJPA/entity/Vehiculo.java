@@ -45,6 +45,7 @@ public class Vehiculo {
     @OneToMany(mappedBy = "vehiculo" ,cascade = CascadeType.ALL)
     private List<Service> services;
 
+    @Min(1)
     private int countOfOwners;
 
     @Override
