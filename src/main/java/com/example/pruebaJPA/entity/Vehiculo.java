@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,12 +31,14 @@ public class Vehiculo {
     @NotNull
     private LocalDate manufacturingDate;
 
+    @Positive
     @Min(1)
     private int numberOfKilometers;
 
     @Min(2)
     private int doors;
 
+    @Positive
     @Min(1000)
     private int price;
 
@@ -45,6 +48,7 @@ public class Vehiculo {
     @OneToMany(mappedBy = "vehiculo" ,cascade = CascadeType.ALL)
     private List<Service> services;
 
+    @Positive
     @Min(1)
     private int countOfOwners;
 

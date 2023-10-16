@@ -3,6 +3,7 @@ package com.example.pruebaJPA.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,10 +24,12 @@ public class VehiculoGetDto {
     private String model;
     @NotNull
     private LocalDate manufacturingDate;
+    @Positive
     @Min(1)
     private int numberOfKilometers;
     @Min(2)
     private int doors;
+    @Positive
     @Min(1000)
     private int price;
     @NotBlank
