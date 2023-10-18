@@ -1,10 +1,7 @@
 package com.example.pruebaJPA.dto;
 
 import com.example.pruebaJPA.entity.Service;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,17 +16,17 @@ public class VehiculoDto {
 
     @Min(1)
     private Long id;
-    @NotBlank
+    @NotBlank(message = "El vehiculo debe contener una Marca")
     private String brand;
-    @NotBlank
+    @NotBlank(message = "El vehiculo debe contener una Modelo")
     private String model;
-    @NotNull
+    @NotNull(message = "El vehiculo debe contener una fecha de fabricación")
     private LocalDate manufacturingDate;
     @Positive
-    @Min(1)
+    @Min(value = 1, message = "El vehiculo debe mostrar los kilometros recorridos")
     private int numberOfKilometers;
     @Positive
-    @Min(2)
+    @Min(value = 2, message = "El vehiculo debe tener al menos 2 puertas")
     private int doors;
     @Positive
     @Min(1000)

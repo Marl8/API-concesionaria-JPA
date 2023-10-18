@@ -1,11 +1,15 @@
 package com.example.pruebaJPA.exception;
 
 import com.example.pruebaJPA.dto.ErrorDto;
+import com.example.pruebaJPA.dto.ErrorValidatorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
 
 @RestControllerAdvice
 public class ExceptionController {
@@ -20,8 +24,8 @@ public class ExceptionController {
     @ExceptionHandler(VehiculoClonException.class)
     public ResponseEntity<?> vehiculoClon(VehiculoClonException ex){
 
-        ErrorDto error = new ErrorDto(404, ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        ErrorDto error = new ErrorDto(400, ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(VehiculoNoSaveException.class)
@@ -36,5 +40,21 @@ public class ExceptionController {
 
         ErrorDto error = new ErrorDto(404, ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> fallaValidacion(MethodArgumentNotValidException ex){
+
+        // Mapa para mostrar todos los errores cuando ocurren varios juntos.
+        HashMap<String, String> errores = new HashMap<>();
+        ex.getFieldErrors()
+                .forEach(field -> errores.put(field.getField(), field.getDefaultMessage()));
+
+        /*
+        GetDefaultMessage extrae el mensaje default establecido en la validación de toda la Field Error
+        ErrorDto error = new ErrorDto(400, ex.getFieldError().getDefaultMessage());
+        */
+
+        return new ResponseEntity<>(new ErrorValidatorDto(400, errores), HttpStatus.BAD_REQUEST);
     }
 }

@@ -53,6 +53,7 @@ public class VehiculoServiceImpl implements IvehiculoService{
         vehiculo.getServices().forEach(service -> {
                 service.setVehiculo(vehiculo);
         });
+
         // Guardamos el vehículo con el objeto padre(vehiculo) ya referenciado.
         Vehiculo respuestaRepo = repository.save(vehiculo);
 
