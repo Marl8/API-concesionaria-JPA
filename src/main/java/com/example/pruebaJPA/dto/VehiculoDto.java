@@ -29,12 +29,12 @@ public class VehiculoDto {
     @Min(value = 2, message = "El vehiculo debe tener al menos 2 puertas")
     private int doors;
     @Positive
-    @Min(1000)
+    @Min(value = 1000, message = "El valor mínimo es $1000")
     private int price;
-    @NotBlank
+    @NotBlank(message = "De contener un valor")
     private String currency;
     List<Service> services;
     @Positive
-    @Min(1)
+    @Min(value = 1, message = "El valor mínimo es 1")
     private int countOfOwners;
 }
