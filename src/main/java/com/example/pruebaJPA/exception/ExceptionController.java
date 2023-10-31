@@ -54,7 +54,6 @@ public class ExceptionController {
         GetDefaultMessage extrae el mensaje default establecido en la validación de toda la Field Error
         ErrorDto error = new ErrorDto(400, ex.getFieldError().getDefaultMessage());
         */
-
         return new ResponseEntity<>(new ErrorValidatorDto(400, errores), HttpStatus.BAD_REQUEST);
     }
 }

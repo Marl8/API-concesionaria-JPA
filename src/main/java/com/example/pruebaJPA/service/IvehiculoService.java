@@ -19,4 +19,6 @@ public interface IvehiculoService {
     public List<VehiculoGetDto> findVehiculosByDate(LocalDate date1, LocalDate date2);
 
     public List<VehiculoDto> findVehiculosByPrice(int price1, int price2);
+
+    public int sumar(int a, int b);
 }

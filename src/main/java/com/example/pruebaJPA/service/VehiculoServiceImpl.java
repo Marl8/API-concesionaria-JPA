@@ -157,6 +157,11 @@ public class VehiculoServiceImpl implements IvehiculoService{
         return result.stream().map(v -> mapper.convertValue(v, VehiculoDto.class)).toList();
     }
 
+    @Override
+    public int sumar(int a, int b) {
+        return a + b;
+    }
+
     /*
     // Método lambda para convertir a dto usando Foreach()
 
