@@ -120,6 +120,9 @@ public class VehiculoServiceImpl implements IvehiculoService{
         if(!verificarSiExisteId(id)){
             throw new VehiculoNotFoundIdException("No existen vehículos con este Id");
         }
+        /*if(!repository.existsById(idVehiculo)){
+            throw new VehiculoNotFoundIdException("No existen vehículos con este Id");
+        }*/
         Vehiculo auto = repository.findById(idVehiculo).get();
         return mapper.convertValue(auto,VehiculoDto.class);
     }
