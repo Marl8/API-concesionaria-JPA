@@ -16,11 +16,11 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/v1/api/vehicles")
 @Validated
-public class controller {
+public class Controller {
 
     IvehiculoService service;
 
-    public controller(VehiculoServiceImpl vehiculoService) {
+    public Controller(VehiculoServiceImpl vehiculoService) {
         this.service = vehiculoService;
     }
 
