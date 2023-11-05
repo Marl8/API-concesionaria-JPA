@@ -13,7 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -30,15 +33,19 @@ public class VehiculoControllerTest {
     void guardarVehiculoTest(){
 
         // Arrange
-        VehiculoDto vehicleDto = ObjectsUtils.objetoVehiculoDto();
+        VehiculoDto argumentSut = ObjectsUtils.objetoVehiculoDto();
         VehiculoResponseDto responseDto = new VehiculoResponseDto("Se guardo correctamente");
         ResponseEntity<?> expected = new ResponseEntity<>(responseDto, HttpStatus.OK);
 
         // Act
-        when(service.guardarVehiculo(vehicleDto)).thenReturn(responseDto);
-        ResponseEntity<?> actual = controller.guardarVehiculo(vehicleDto);
+        when(service.guardarVehiculo(any())).thenReturn(new VehiculoResponseDto("Se guardo correctamente"));
+        ResponseEntity<?> actual = controller.guardarVehiculo(argumentSut);
 
         // Assert
-        assertEquals(expected, actual);
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.getBody(), actual.getBody()),
+                () -> assertEquals(expected.getStatusCode(), actual.getStatusCode())
+        );
     }
 }

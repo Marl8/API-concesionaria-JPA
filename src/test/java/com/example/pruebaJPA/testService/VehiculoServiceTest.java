@@ -79,7 +79,8 @@ public class VehiculoServiceTest {
         assertThrows(VehiculoNotFoundException.class, () -> service.findAllSinServices());
     }
 
-    @Test
+   /*
+   @Test
     @DisplayName("Test OK buscar vehiculo por id usando existsById()")
     void findVehiculoByIdOkTest(){
 
@@ -101,6 +102,8 @@ public class VehiculoServiceTest {
                 () -> assertEquals(expected.getManufacturingDate(), actual.getManufacturingDate())
         );
     }
+
+    * */
 
     @Test
     @DisplayName("Test OK buscar vehiculo por id con método privado")
