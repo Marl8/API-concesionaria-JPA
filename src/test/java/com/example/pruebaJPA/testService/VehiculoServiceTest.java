@@ -128,7 +128,8 @@ public class VehiculoServiceTest {
         assertAll(
                 () -> assertEquals(expected.getBrand(), actual.getBrand()),
                 () -> assertEquals(expected.getModel(), actual.getModel()),
-                () -> assertEquals(expected.getManufacturingDate(), actual.getManufacturingDate())
+                () -> assertEquals(expected.getManufacturingDate(), actual.getManufacturingDate()),
+                () -> assertEquals(expected.getId(), actual.getId())
         );
     }
 
