@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -33,7 +35,7 @@ public class IntegrationTest {
         MvcResult response = mockMvc.perform(get( "/v1/api/vehicles"))
                 .andDo(print()) // imprime por consola el request y él response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[1].brand").value("Peugeot"))
+                .andExpect(jsonPath("$[1].brand").value("ford"))
                 .andReturn();
 
         // verifica si retorna un json
@@ -46,7 +48,7 @@ public class IntegrationTest {
         mockMvc.perform(get( "/v1/api/vehicles/{id}", 1))
                 .andDo(print()) // imprime por consola el request y él response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.brand").value("Fiat"));
+                .andExpect(jsonPath("$.brand").value("renault"));
     }
 
     @Test
@@ -72,9 +74,10 @@ public class IntegrationTest {
     }
 
     @Test
+    @Rollback(false)
     void vehiculoGuardarOKTest() throws Exception{
 
-        VehiculoDto dto = ObjectsUtils.objetoVehiculoDto();
+        VehiculoDto dto = ObjectsUtils.objetoVehiculoIntegracion();
 
         ObjectMapper obMapper = new ObjectMapper();
         obMapper.registerModule(new JavaTimeModule());
@@ -85,13 +88,13 @@ public class IntegrationTest {
         String payload = mapper.writeValueAsString(dto);
 
 
-        mockMvc.perform(get( "/v1/api/vehicles")
+        mockMvc.perform(post( "/v1/api/vehicles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(payload)
                 )
                 .andDo(print()) // imprime por consola el request y él response
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("El vehiculo modelo fiat se guardó correctamente."));
+                .andExpect(jsonPath("$.message").value("El vehiculo modelo Corsa se guardó correctamente."));
     }
 }

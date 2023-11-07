@@ -36,6 +36,20 @@ public class ObjectsUtils {
         return vehiculodto;
     }
 
+    public static VehiculoDto objetoVehiculoIntegracion(){
+        List<Service> servicios = new ArrayList<>();
+        LocalDate fechaFabricacion = LocalDate.parse("2007-02-26");
+        VehiculoDto vehiculodto = new VehiculoDto(3L,"Fiat", "Corsa", fechaFabricacion, 102500,
+                3, 3500, "AR", servicios  , 6);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        Vehiculo vehiculo = mapper.convertValue(vehiculodto, Vehiculo.class);
+        servicios.add(new Service(3L, "2007-02-26", "filters", 10000, vehiculo));
+        vehiculodto.setServices(servicios);
+        return vehiculodto;
+    }
+
     public static List<Vehiculo> listaVehiculos() {
         List<Vehiculo> traerTodos = new ArrayList<>();
         List<Service> servicios1 = new ArrayList<>();
