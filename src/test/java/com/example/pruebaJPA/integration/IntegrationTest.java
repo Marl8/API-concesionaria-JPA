@@ -2,6 +2,7 @@ package com.example.pruebaJPA.integration;
 
 import com.example.pruebaJPA.Utils.ObjectsUtils;
 import com.example.pruebaJPA.dto.VehiculoDto;
+import com.example.pruebaJPA.dto.VehiculoResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -76,6 +77,61 @@ public class IntegrationTest {
     @Test
     @Rollback(false)
     void vehiculoGuardarOKTest() throws Exception{
+
+        VehiculoDto dto = ObjectsUtils.objetoVehiculoIntegracion();
+
+        ObjectMapper obMapper = new ObjectMapper();
+        obMapper.registerModule(new JavaTimeModule());
+        ObjectWriter mapper = obMapper
+                .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                .writer();
+
+        String payload = mapper.writeValueAsString(dto);
+
+
+        mockMvc.perform(post( "/v1/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload)
+                )
+                .andDo(print()) // imprime por consola el request y él response
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("El vehiculo modelo Corsa se guardó correctamente."));
+    }
+
+    @Test
+    @Rollback(false)
+    void vehiculoGuardarOKTest2() throws Exception{
+
+        VehiculoDto dto = ObjectsUtils.objetoVehiculoIntegracion();
+
+        ObjectMapper obMapper = new ObjectMapper();
+        obMapper.registerModule(new JavaTimeModule());
+        ObjectWriter mapper = obMapper
+                .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                .writer();
+
+        VehiculoResponseDto expected = new VehiculoResponseDto("El vehiculo modelo Corsa se guardó correctamente.");
+
+        String respuesta =mapper.writeValueAsString(expected);
+
+        String payload = mapper.writeValueAsString(dto);
+
+
+        MvcResult response = mockMvc.perform(post( "/v1/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload)
+                )
+                .andDo(print()) // imprime por consola el request y él response
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        assertEquals(respuesta, response.getResponse().getContentAsString());
+    }
+
+    @Test
+    @Rollback(false)
+    void vehiculoGuardarOKTest3() throws Exception{
 
         VehiculoDto dto = ObjectsUtils.objetoVehiculoIntegracion();
 
